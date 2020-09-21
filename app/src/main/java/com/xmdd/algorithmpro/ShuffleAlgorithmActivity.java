@@ -229,7 +229,7 @@ public class ShuffleAlgorithmActivity extends MyBeseActivity implements View.OnC
         if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             mCameraTmpFile = createTmpFile(this);  // 设置系统相机拍照后的输出路径, 创建临时文件
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraTmpFile));
-//            MyLog.i(BrowserActivity.class.getName(), "==openCamera,mCameraTmpFile-->" + mCameraTmpFile);
+            MyLog.info("==openCamera,mCameraTmpFile-->" + mCameraTmpFile);
             startActivityForResult(cameraIntent, 1001);
         } else {
             MyToast.showToast("没有系统相机");
@@ -271,26 +271,31 @@ public class ShuffleAlgorithmActivity extends MyBeseActivity implements View.OnC
                     originalBitmap = openImage(absoluteImagePath);
                     iv_realimg.setImageBitmap(originalBitmap);
                     iv_realimg.setImageAlpha(10);
-                    int bitmapW = originalBitmap.getWidth();
-                    int bitmapH = originalBitmap.getHeight();
-                    int pieceWidth = bitmapW / 4;
-                    int pieceHeight = bitmapH / 4;
-                    imgLists.clear();
-                    int count = 0;
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-                            Bitmap imgBitmap = Bitmap.createBitmap(originalBitmap, j * pieceWidth, i * pieceHeight,
-
-                                    pieceWidth, pieceHeight);
-
-                            imgLists.add(new ImageBean(imgBitmap, false, count));
-                            count++;
-                        }
-                    }
+                    bitmapCut(originalBitmap);
                     shuffleList(imgLists);
                     myGridViewAdapter.notifyDataSetChanged();
                 }
                 break;
+        }
+    }
+
+    /**
+     * bitmap分割
+     */
+    public void bitmapCut(Bitmap bitmap) {
+        int bitmapW = bitmap.getWidth();
+        int bitmapH = bitmap.getHeight();
+        int pieceWidth = bitmapW / 4;
+        int pieceHeight = bitmapH / 4;
+        imgLists.clear();
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Bitmap imgBitmap = Bitmap.createBitmap(bitmap, j * pieceWidth, i * pieceHeight,
+                        pieceWidth, pieceHeight);
+                imgLists.add(new ImageBean(imgBitmap, false, count));
+                count++;
+            }
         }
     }
 
@@ -303,11 +308,13 @@ public class ShuffleAlgorithmActivity extends MyBeseActivity implements View.OnC
         for (int i = 0; i < imgLists.size(); i++) {
             //生成随机下标  //更改随机下标的取值范围 例：0 ~ n-i
             int randomIndex = (int) (Math.random() * (imgLists.size() - i));
-            //生成的随机下标对应的对象和最后一个未确定的对象 交换
+            //方法1：生成的随机下标对应的对象和最后一个未确定的对象 交换
             ImageBean temp = imgLists.get(imgLists.size() - 1 - i);
             imgLists.set(imgLists.size() - 1 - i, imgLists.get(randomIndex));
             imgLists.set(randomIndex, temp);
-//            imgLists.add(imgLists.remove(randomIndex));
+
+            //方法2：把生成的随机下标对应的对象放到队尾
+            //imgLists.add(imgLists.remove(randomIndex));
         }
     }
 

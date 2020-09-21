@@ -30,7 +30,7 @@ public class MainActivity extends MyBeseActivity {
         setContentView(R.layout.activity_main);
 
         algorithmList.add(new AlgorithmBean(R.mipmap.ic_algorithm_1, "洗牌算法", "洗牌算法本质是对数组元素的随机重排，用到的地方很多，如：双色球选号、数字华容道、舒尔特表格等"));
-        algorithmList.add(new AlgorithmBean(R.mipmap.ic_algorithm_1, "", ""));
+//        algorithmList.add(new AlgorithmBean(R.mipmap.ic_algorithm_1, "", ""));
         ListView lv_main_algorithm = findViewById(R.id.lv_main_algorithm);
         lv_main_algorithm.setAdapter(new BaseAdapter() {
             @Override
